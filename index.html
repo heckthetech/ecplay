@@ -785,7 +785,7 @@ function handleFile(file) {
       playbackRate = progress.playbackRate || 1;
       video.playbackRate = playbackRate;
       if(playbackRate == 1){showSnapPopup(`Resumed from ${formatTime(progress.time)}`);}
-      else{showSnapPopup(`Resumed from ${formatTime(progress.time)} @${playbackRate}x`);}
+      else{showSnapPopup(`Resumed from ${formatTime(progress.time)} @${playbackRate.toFixed(1)}x`);}
     }
     video.play();
   });
@@ -836,7 +836,7 @@ function handleFile(file) {
         break;
       case ']':
       case '=':
-        playbackRate = Math.min(playbackRate + 0.1, 5);
+        playbackRate = Math.min(playbackRate + 0.1, 8);
         video.playbackRate = playbackRate;
         showSnapPopup(`Speed: ${playbackRate.toFixed(1)}x`);
         updateTime();
