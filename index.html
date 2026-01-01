@@ -3,11 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EC Player</title>
+  <title>Chrona Player</title>
   <style>
     * {
       box-sizing: border-box;
     }
+    *::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+ cursor:auto;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.692); 
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  cursor:auto;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
     body, html {
       margin: 0; padding: 0; height: 100%;
       background: #121212;
@@ -16,6 +49,16 @@
       user-select: none;
       overflow: hidden;
     }
+    
+    #browser-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background: #121212;
+    }
+
     #dropzone {
       position: fixed;
       inset: 0;
@@ -57,7 +100,7 @@
       justify-content: center;
       align-items: center;
       padding: 1rem;
-      z-index: 20;
+      z-index: 200; 
     }
     #player-box {
       background: rgba(30,30,30,0.85);
@@ -295,35 +338,208 @@
       transform: translate(50%, -50%);
     }
 
-        #toolbar {
+    #title-popup {
+      position: fixed;
+      background: rgba(25, 25, 25, 0.98);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      max-width: 300px;
+      z-index: 500;
+      pointer-events: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+      border: 1px solid #444;
+      display: none;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.3;
+    }
+
+    #toolbar {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
-      margin: 0 2rem 1rem 2rem;
+      gap: 1rem;
+      margin: 1rem 2rem;
       flex-wrap: wrap;
+      flex-shrink: 0;
+      justify-content: space-between; 
+      background: #1c1c1c;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      border: 1px solid #333;
+    }
+    
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+    }
+    
+    .tools-group {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        flex-wrap: nowrap; 
+    }
+    
+    .speed-control-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #252525;
+        padding: 0 12px;
+        border-radius: 6px; 
+        border: 1px solid #333;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+        height: 36px; 
+    }
+    
+    .speed-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #888;
+        font-weight: 600;
+        margin-right: 4px;
+        white-space: nowrap;
+    }
+    
+    #folderSpeedRange {
+        width: 100px;
+        height: 4px;
+        background: #444;
+        border-radius: 2px;
+        appearance: none;
+        outline: none;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+    }
+    
+    #folderSpeedRange::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        background: #ddd;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.1s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        margin-top: 0;
+    }
+    
+    #folderSpeedRange::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        background: #fff;
+    }
+
+    #folderSpeedRange::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        background: #ddd;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.1s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    #folderSpeedRange::-moz-range-thumb:hover {
+        transform: scale(1.1);
+        background: #fff;
+    }
+    
+    #folderSpeedDisplay {
+        font-size: 0.85rem;
+        color: #ddd;
+        font-family: monospace;
+        min-width: 35px;
+        text-align: right;
+        font-weight: 600;
+    }
+    
+    .time-stat-container {
+        background: #252525;
+        padding: 0 12px;
+        border-radius: 6px;
+        border: 1px solid #333;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    .time-stat {
+        font-size: 0.85rem;
+        color: #aaa;
+        font-family: monospace;
+        font-weight: 600;
+    }
+    
+    .delete-btn {
+        background-color: #2c1e1e !important;
+        border-color: #4a2828 !important;
+        color: #d35f5f !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 !important;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px !important; 
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .delete-btn:hover {
+        background-color: #442222 !important;
+        border-color: #7d4444 !important;
+        color: #ff6b6b !important;
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    
+    .delete-btn svg {
+        width: 20px;
+        height: 20px;
+        display: block;
     }
 
     button.nav-btn, button#pickBtn {
       background-color: #2e2e2e;
       border: 1px solid #444;
-      padding: 0.4rem 0.9rem;
-      font-size: 1rem;
+      padding: 0 1rem;
+      font-size: 0.95rem;
       border-radius: 6px;
       color: #ddd;
       cursor: pointer;
-      transition: background-color 0.2s ease, border-color 0.2s ease;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s;
       user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      white-space: nowrap;
     }
+    
     button.nav-btn:disabled {
-      color: #666;
+      color: #555;
       cursor: default;
-      border-color: #333;
+      border-color: #2a2a2a;
+      background-color: #222;
     }
+    
     button.nav-btn:not(:disabled):hover,
     button#pickBtn:hover,
     button#pickBtn:focus {
       background-color: #3a3a3a;
       border-color: #666;
+      color: #fff;
       outline: none;
     }
 
@@ -335,21 +551,24 @@
       overflow: hidden;
       text-overflow: ellipsis;
       user-select: text;
+      margin: 0 15px;
+      font-weight: 500;
     }
     #breadcrumb span {
       cursor: pointer;
       user-select: none;
       color: #bbb;
+      transition: color 0.2s;
     }
     #breadcrumb span:hover {
       text-decoration: underline;
-      color: #e0e0e0;
+      color: #fff;
     }
 
     #fileGrid {
-      flex-grow: 1;
-      overflow-y: auto;
-      margin:-1px 1rem 1rem 1rem;
+      flex-grow: 1; 
+      overflow-y: auto; 
+      margin: 0 1rem 1rem 1rem;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 1rem;
@@ -357,6 +576,7 @@
       border-radius: 8px;
       padding: 1rem;
       user-select: none;
+      align-content: start; 
     }
 
     .card {
@@ -371,30 +591,36 @@
       min-height: 130px;
       max-height: 130px;
       position: relative;
-      transition: background-color 0.15s ease;
+      transition: transform 0.1s;
     }
     .card.clickable {
       cursor: pointer;
     }
     .card:hover {
-      background-color: #2e2e2e;
+      box-shadow: inset 0 0 0 1000px rgba(255,255,255,0.05);
+    }
+    
+    .card.last-played {
+      box-shadow: 0 0 0 2px #555;
+    }
+    .card.last-played:hover {
+      box-shadow: 0 0 0 2px #777, inset 0 0 0 1000px rgba(255,255,255,0.05);
     }
 
     .name {
       font-weight: 600;
-font-size: 0.6rem;
-color: #ddd;
-text-align: center;
-display: -webkit-box;
--webkit-line-clamp: 2;
--webkit-box-orient: vertical;
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: normal;  /* allow wrapping */
-word-break: normal;   /* no forced break */
-width: 100%;
-user-select: text;
-
+      font-size: 0.6rem;
+      color: #ddd;
+      text-align: center;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;  
+      word-break: normal;   
+      width: 100%;
+      user-select: text;
     }
 
     .play-icon {
@@ -470,11 +696,17 @@ user-select: text;
       flex-shrink: 0;
       position: relative;
       max-height: 70px;
+      min-height: 70px; 
+      background: #1a1a1a; 
     }
     .thumb-img-wrapper {
       position: relative;
       display: inline-block;
+      width: 100%; 
+      height: 70px;
+      margin-bottom: 5px;
     }
+
 
     .file-icon {
       position: absolute;
@@ -513,6 +745,7 @@ user-select: text;
     position: absolute;
     bottom: 15px;
     right: 20px;
+    z-index: 150;
   }
   .switch {
     position: relative;
@@ -579,6 +812,13 @@ user-select: text;
       inset 0 1px 0 rgba(255,255,255,0.3),
       0 4px 10px rgba(0,0,0,0.9);
   }
+  
+  #settings-bar {
+    padding: 10px 2rem;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
   </style>
 </head>
 <body>
@@ -587,32 +827,56 @@ user-select: text;
       <path d="M5 20h14v-2H5v2zm7-18L5.33 9.67l1.41 1.41L11 7.83v10.17h2V7.83l4.26 3.25 1.41-1.41L12 2z"/>
     </svg>
     <p>Click or drag & drop video here</p>
-    <input type="file" accept="video/*" id="file-input" />    
+    <input type="file" accept="video/*, .mkv, .mp4, .webm" id="file-input" />    
   </div>
         <button class="browse-button" id="browseropen" onclick="openbrowse();" >Browse Video Gallery</button>
 
-<xcz id="all" style="display: all;">
+<div id="browser-container">
 <br>
-<label>
+
+<div id="toolbar" role="region" aria-label="Folder selection toolbar">
+  <div class="nav-group">
+    <button id="backBtn" class="nav-btn" aria-label="Go back" disabled>&larr;</button>
+    <button id="homeBtn" class="nav-btn" aria-label="Go home">&#8962;</button>
+    <button id="forwardBtn" class="nav-btn" aria-label="Go forward" disabled> &rarr;</button>
+    <button id="pickBtn" aria-label="Pick videos folder">Select Videos Folder</button>
+  </div>
+  
+  <nav id="breadcrumb" aria-label="Breadcrumb navigation"></nav>
+
+  <!-- Feature 3 & 4: Speed Calc and Delete Controls -->
+  <div class="tools-group">
+    <div class="speed-control-container">
+      <div class="speed-label">Speed</div>
+      <input type="range" id="folderSpeedRange" min="0.5" max="4.0" step="0.1" value="1.0">
+      <div id="folderSpeedDisplay">1x</div>
+    </div>
+    
+    <div class="time-stat-container">
+      <span id="folderTotalTime" class="time-stat"></span>
+    </div>
+
+    <button id="resetFolderBtn" class="nav-btn delete-btn" title="Reset History &amp; Thumbs for this folder">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+    </button>
+  </div>
+</div>
+
+<div id="fileGrid" aria-live="polite" aria-label="Files and folders grid">
+  <div class="no-data">No folder selected or permission denied.</div>
+</div>
+
+<div id="settings-bar">
+<label style="position: relative; bottom: auto; right: auto;">
   Open browse section by default
   <div class="switch">
     <input type="checkbox" id="browseToggle" />
     <span class="slider"></span>
   </div>
 </label>
-
-<div id="toolbar" role="region" aria-label="Folder selection toolbar">
-  <button id="backBtn" class="nav-btn" aria-label="Go back" disabled>&larr;</button>
-  <button id="homeBtn" class="nav-btn" aria-label="Go home">&#8962;</button>
-  <button id="forwardBtn" class="nav-btn" aria-label="Go forward" disabled> &rarr;</button>
-  <button id="pickBtn" aria-label="Pick videos folder">Select Videos Folder</button>
-  <nav id="breadcrumb" aria-label="Breadcrumb navigation"></nav>
 </div>
 
-<div id="fileGrid" aria-live="polite" aria-label="Files and folders grid">
-  <div class="no-data">No folder selected or permission denied.</div>
 </div>
-</xcz>
 
   <div id="player-container" aria-label="Video player container">
     <div id="player-box" role="region" aria-label="Video player">
@@ -630,6 +894,8 @@ user-select: text;
       </div>
     </div>
   </div>
+
+  <div id="title-popup"></div>
 
 <script>
   
@@ -650,7 +916,11 @@ user-select: text;
   const snapPopup = document.getElementById('snap-popup');
   const seekPopup = document.getElementById('seek-popup');
   const fullscreenBtn = document.getElementById('fullscreen-btn');
-
+  const titlePopup = document.getElementById('title-popup');
+  const folderSpeedRange = document.getElementById('folderSpeedRange');
+  const folderSpeedDisplay = document.getElementById('folderSpeedDisplay');
+  const folderTotalTime = document.getElementById('folderTotalTime');
+  const resetFolderBtn = document.getElementById('resetFolderBtn');
   let playbackRate = 1;
   let snapTimeout = null;
   let currentFileName = null;
@@ -660,6 +930,8 @@ user-select: text;
   let seekPopupTimeout = null;
   let controlsHideTimer = null;
   let lastSaveTime = -1;
+  
+  let currentViewFiles = [];   let thumbnailQueue = [];   let isProcessingQueue = false;
 
   function formatTime(sec) {
     sec = Math.floor(sec);
@@ -668,6 +940,15 @@ user-select: text;
     const s = sec % 60;
     if (h > 0) return h + ':' + (m < 10 ? '0'+m : m) + ':' + (s < 10 ? '0'+s : s);
     return m + ':' + (s < 10 ? '0' + s : s);
+  }
+  
+  function formatHoursMinutes(sec) {
+     const h = Math.floor(sec / 3600);
+     const m = Math.floor((sec % 3600) / 60);
+     const s = Math.floor(sec % 60);
+     if(h===0 && m===0) return `0m left`;
+     if(h===0) return `${m}m left`;
+     return `${h}h ${m}m left`;
   }
 
   function formatAMPM(date) {
@@ -729,11 +1010,38 @@ user-select: text;
     if (!currentFileName) return;
     const data = {
       time: video.currentTime,
+      duration: video.duration || 0,
       playbackRate,
       lastModified: currentFileLastModified,
-      size: currentFileSize
+      size: currentFileSize,
+      timestamp: Date.now() 
     };
     localStorage.setItem('video-progress-' + currentFileName, JSON.stringify(data));
+  }
+  
+  function saveDuration(file, duration) {
+      if(!file) return;
+      const key = 'video-progress-' + file.name;
+      const existing = localStorage.getItem(key);
+      if(existing) {
+          try {
+             const data = JSON.parse(existing);
+             if (!data.duration && duration > 0) {
+                 data.duration = duration;
+                 localStorage.setItem(key, JSON.stringify(data));
+             }
+          } catch(e) {}
+      } else {
+          const data = {
+              time: 0,
+              duration: duration,
+              playbackRate: 1,
+              lastModified: file.lastModified,
+              size: file.size,
+              timestamp: 0 
+          };
+          localStorage.setItem(key, JSON.stringify(data));
+      }
   }
 
   function loadProgress(fileInfo) {
@@ -751,10 +1059,9 @@ user-select: text;
     return null;
   }
 function handleFile(file) {
-  if (!file.type.startsWith('video/')) {
-    alert('Please select a valid video file.');
-    return;
+  if (!file.type.startsWith('video/') && !file.name.match(/\.(mkv|mp4|webm)$/i)) {
   }
+  
   openbrowse();
   currentFileName = file.name;
   currentFileSize = file.size;
@@ -987,6 +1294,16 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       tx.onerror = e => rej(e.target.error);
     });
   }
+  
+  async function deleteThumb(key) {
+    const db = await openThumbDB();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('thumbs', 'readwrite');
+      tx.objectStore('thumbs').delete(key);
+      tx.oncomplete = () => res();
+      tx.onerror = e => rej(e.target.error);
+    });
+  }
 
   async function getThumb(key) {
     const db = await openThumbDB();
@@ -995,6 +1312,26 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       const req = tx.objectStore('thumbs').get(key);
       req.onsuccess = () => res(req.result);
       req.onerror = e => rej(e.target.error);
+    });
+  }
+
+  async function getVideoDurationOnly(file) {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.muted = true;
+      video.src = URL.createObjectURL(file);
+      
+      video.onloadedmetadata = () => {
+        const duration = video.duration;
+        URL.revokeObjectURL(video.src);
+        resolve(duration);
+      };
+      
+      video.onerror = (e) => {
+        URL.revokeObjectURL(video.src);
+        reject(e);
+      };
     });
   }
 
@@ -1007,7 +1344,7 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       video.crossOrigin = 'anonymous';
 
       video.addEventListener('loadeddata', () => {
-        video.currentTime = 0;
+        video.currentTime = Math.min(video.duration * 0.1, 5);
       });
 
       video.addEventListener('seeked', () => {
@@ -1016,11 +1353,14 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
         canvas.height = video.videoHeight;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const duration = video.duration;
+        
         URL.revokeObjectURL(video.src);
         canvas.toBlob(blob => {
           const reader = new FileReader();
           reader.onloadend = () => {
-            resolve(reader.result);
+            resolve({ dataURL: reader.result, duration: duration });
           };
           reader.onerror = reject;
           reader.readAsDataURL(blob);
@@ -1033,6 +1373,57 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       };
     });
   }
+  
+  async function enqueueThumbnail(file, imgElement, imgWrapper) {
+      thumbnailQueue.push({ file, imgElement, imgWrapper });
+      processThumbnailQueue();
+  }
+
+  async function processThumbnailQueue() {
+      if (isProcessingQueue || thumbnailQueue.length === 0) return;
+      isProcessingQueue = true;
+
+      while (thumbnailQueue.length > 0) {
+          const item = thumbnailQueue.shift();
+          if(!document.body.contains(item.imgElement)) continue;
+
+          const { file, imgElement, imgWrapper } = item;
+          const key = `${file.name}-${file.size}-${file.lastModified}`;
+          const prog = loadProgress({name: file.name, size: file.size, lastModified: file.lastModified});
+          const hasDuration = prog && prog.duration > 0;
+          
+          let cached = await getThumb(key);
+          
+          if (cached && hasDuration) {
+               imgElement.src = cached;
+          } else {
+              if (!cached) {
+                  try {
+                      const { dataURL, duration } = await generateVideoThumbnail(file);
+                      await saveThumb(key, dataURL);
+                      saveDuration(file, duration);
+                      imgElement.src = dataURL;
+                      updateSpeedCalc();
+                  } catch (e) {
+                      const icon = createFileIcon();
+                      imgWrapper.innerHTML = '';
+                      imgWrapper.appendChild(icon);
+                      imgElement.style.display = 'none';
+                  }
+              } else {
+                  imgElement.src = cached;
+                  try {
+                      const duration = await getVideoDurationOnly(file);
+                      saveDuration(file, duration);
+                      updateSpeedCalc();
+                  } catch(e) {}
+              }
+          }
+          await new Promise(r => requestAnimationFrame(r));
+      }
+      isProcessingQueue = false;
+  }
+
 
   async function verifyPermission(handle) {
     if (!handle) return false;
@@ -1100,20 +1491,6 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
     return svg;
   }
 
-  async function getVideoThumbnail(file) {
-    const key = `${file.name}-${file.size}-${file.lastModified}`;
-    let cached = await getThumb(key);
-    if (cached) return cached;
-
-    try {
-      const thumb = await generateVideoThumbnail(file);
-      await saveThumb(key, thumb);
-      return thumb;
-    } catch {
-      return null;
-    }
-  }
-
   async function getFolderThumbs(folderHandle) {
     let thumbs = [];
     try {
@@ -1121,9 +1498,10 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
         if (entry.kind === 'file' && isVideoFile(entry.name)) {
           try {
             const file = await entry.getFile();
-            const thumb = await getVideoThumbnail(file);
-            if (thumb) {
-              thumbs.push(thumb);
+            const key = `${file.name}-${file.size}-${file.lastModified}`;
+            const cached = await getThumb(key);
+            if (cached) {
+              thumbs.push(cached);
               if (thumbs.length >= 4) break;
             }
           } catch {}
@@ -1170,73 +1548,258 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
 
     return container;
   }
+
+  function showTitlePopup(text, rect) {
+    titlePopup.textContent = text;
+    titlePopup.style.display = 'block';
+    const top = rect.bottom + 5;
+    let left = rect.left + (rect.width / 2) - 150; 
+    
+    if (left < 10) left = 10;
+    if (left + 300 > window.innerWidth) left = window.innerWidth - 310;
+    
+    titlePopup.style.top = `${top}px`;
+    titlePopup.style.left = `${left}px`;
+  }
+  
+  function hideTitlePopup() {
+    titlePopup.style.display = 'none';
+  }
+  
+  function updateSpeedCalc() {
+      const speed = parseFloat(folderSpeedRange.value);
+      folderSpeedDisplay.textContent = speed.toFixed(1) + 'x';
+      
+      let totalRemaining = 0;
+      
+      currentViewFiles.forEach(item => {
+         const prog = loadProgress({ name: item.entry.name, size: item.file?.size, lastModified: item.file?.lastModified });
+         
+         if (prog) {
+             const dur = prog.duration || 0;
+             const time = prog.time || 0;
+             const left = Math.max(0, dur - time);
+             totalRemaining += left;
+         } else {
+         }
+      });
+      
+      const realSeconds = totalRemaining / speed;
+      folderTotalTime.textContent = formatHoursMinutes(realSeconds);
+  }
+  
+  const savedFolderSpeed = localStorage.getItem('folderSpeed');
+  if (savedFolderSpeed) {
+      folderSpeedRange.value = savedFolderSpeed;
+  }
+  
+  folderSpeedRange.addEventListener('input', () => {
+      localStorage.setItem('folderSpeed', folderSpeedRange.value);
+      updateSpeedCalc();
+  });
+  
+  resetFolderBtn.onclick = async () => {
+      if(!currentViewFiles || currentViewFiles.length === 0) return;
+      if(confirm(`Are you sure you want to reset play history and delete cached thumbnails for the ${currentViewFiles.length} videos in this folder?`)) {
+          for(const item of currentViewFiles) {
+              if(item.file) {
+                 const key = `video-progress-${item.file.name}`;
+                 localStorage.removeItem(key);
+                 
+                 const thumbKey = `${item.file.name}-${item.file.size}-${item.file.lastModified}`;
+                 await deleteThumb(thumbKey);
+              }
+          }
+          listFiles(currentHandle);
+      }
+  };
+  
+  function updateURL(fileName = null) {
+      if(!currentHandle) return;
+      const pathNames = pathStack.map(h => h.name);
+      if(currentHandle !== rootHandle) pathNames.push(currentHandle.name);
+      if(fileName) pathNames.push(fileName);
+      
+      const fullPath = "/" + pathNames.join("/");
+      const url = new URL(window.location);
+      url.searchParams.set('path', fullPath);
+      window.history.pushState({path: fullPath}, '', url);
+  }
+  
+  window.addEventListener('popstate', (event) => {
+      restorePathFromHash();
+  });
+
   async function listFiles(handle) {
     fileGrid.innerHTML = '';
+    currentViewFiles = []; 
+    thumbnailQueue = []; 
+    
     try {
-      let found = false;
-      for await (const entry of handle.values()) {
-        if (entry.kind === 'file' && !isVideoFile(entry.name)) {
-          continue;
-        }
-        found = true;
-        const card = document.createElement('div');
-        card.className = 'card';
-        if (entry.kind === 'directory') card.classList.add('clickable');
+      const folders = [];
+      const files = [];
 
-        if (entry.kind === 'directory') {
-          const thumbs = await getFolderThumbs(entry);
-          const folderThumb = createFolderThumbCollage(thumbs);
-          card.appendChild(folderThumb);
+      for await (const entry of handle.values()) {
+        if (entry.kind === 'file' && isVideoFile(entry.name)) {
+           try {
+             const file = await entry.getFile();
+             const progress = loadProgress({name: file.name, size: file.size, lastModified: file.lastModified});
+             files.push({ entry, file, progress });
+           } catch {
+             files.push({ entry, file: null, progress: null });
+           }
+        } else if (entry.kind === 'directory') {
+          folders.push(entry);
+        }
+      }
+
+      currentViewFiles = files;
+      updateSpeedCalc(); 
+
+      if (files.length === 0 && folders.length === 0) {
+        fileGrid.innerHTML = `<div class=\"no-data\">No videos or folders found.</div>`;
+        return;
+      }
+      
+      let lastPlayedIndex = -1;
+      let maxTimestamp = 0;
+      
+      files.forEach((item, index) => {
+        if (item.progress && item.progress.timestamp > maxTimestamp) {
+          maxTimestamp = item.progress.timestamp;
+          lastPlayedIndex = index;
+        }
+      });
+      
+      const lastPlayedItem = lastPlayedIndex > -1 ? files[lastPlayedIndex] : null;
+      const otherFiles = files.filter((_, idx) => idx !== lastPlayedIndex);
+      
+      const inProgress = []; 
+      const unplayed = [];   
+      const finished = [];   
+      
+      otherFiles.forEach(item => {
+        if (!item.progress || item.progress.time === 0) {
+          unplayed.push(item);
+        } else {
+          const duration = item.progress.duration || 0;
+          let percent = 0;
+          if (duration > 0) percent = (item.progress.time / duration) * 100;
+          
+          if (percent >= 95) finished.push(item);
+          else inProgress.push(item);
+        }
+      });
+      
+      const sortByName = (a, b) => a.entry.name.localeCompare(b.entry.name, undefined, {numeric: true, sensitivity: 'base'});
+      inProgress.sort(sortByName);
+      unplayed.sort(sortByName);
+      finished.sort(sortByName);
+      
+      const sortedFiles = [];
+      if (lastPlayedItem) sortedFiles.push({...lastPlayedItem, isLastPlayed: true});
+      sortedFiles.push(...inProgress);
+      sortedFiles.push(...unplayed);
+      sortedFiles.push(...finished);
+      
+      folders.sort((a,b) => a.name.localeCompare(b.name));
+      
+      for (const entry of folders) {
+          const card = document.createElement('div');
+          card.className = 'card clickable';
+          
+          const thumbContainer = document.createElement('div');
+          thumbContainer.className = 'folder-thumb';
+          thumbContainer.innerHTML = '<div style="background:#333;width:100%;height:100%;border-radius:4px;"></div>'; 
+          getFolderThumbs(entry).then(thumbs => {
+             const newThumb = createFolderThumbCollage(thumbs);
+             thumbContainer.replaceWith(newThumb);
+          });
+          
+          card.appendChild(thumbContainer);
+          
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'name';
+          nameSpan.textContent = entry.name;
+          card.appendChild(nameSpan);
+
           card.onclick = () => {
             forwardStack = []; 
             pathStack.push(currentHandle);
             currentHandle = entry;
             updateBreadcrumb();
             updateNavButtons();
+            updateURL();
             listFiles(currentHandle);
           };
-        } else {
-          try {
-            const file = await entry.getFile();
-            const thumb = await getVideoThumbnail(file);
-            if (thumb) {
-              const imgWrapper = document.createElement('div');
-              imgWrapper.className = 'thumb-img-wrapper';
-              const img = document.createElement('img');
-              img.className = 'thumb-img';
-              img.src = thumb;
-              imgWrapper.appendChild(img);
-              imgWrapper.appendChild(createPlayIcon());
-              card.appendChild(imgWrapper);
-            } else {
-              card.appendChild(createFileIcon());
-            }
-            card.classList.add('clickable');
-            card.onclick = async () => {
-              try {
-                const file = await entry.getFile();
-                handleFile(file);
-              } catch (e) {
-                alert('Failed to get file: ' + e.message);
-              }
-            };
-          } catch {
-            card.appendChild(createFileIcon());
-          }
+          fileGrid.appendChild(card);
+      }
+      
+      for (const item of sortedFiles) {
+        const { entry, file, progress, isLastPlayed } = item;
+        const card = document.createElement('div');
+        card.className = 'card clickable';
+        if (isLastPlayed) card.classList.add('last-played');
+        
+        card.addEventListener('mouseenter', (e) => showTitlePopup(entry.name, card.getBoundingClientRect()));
+        card.addEventListener('mouseleave', () => hideTitlePopup());
+        
+        if (progress) {
+          const duration = progress.duration || 0;
+          let percent = 0;
+          if (duration > 0) percent = (progress.time / duration) * 100;
+          if (percent > 100) percent = 100;
+          
+          card.style.background = `linear-gradient(to right, #3a3a3a ${percent}%, #252525 ${percent}%)`;
         }
+        
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'thumb-img-wrapper';
+        
+        const img = document.createElement('img');
+        img.className = 'thumb-img';
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        imgWrapper.appendChild(img);
 
+        imgWrapper.appendChild(createPlayIcon());
+        card.appendChild(imgWrapper);
+        
         const nameSpan = document.createElement('span');
         nameSpan.className = 'name';
         nameSpan.textContent = entry.name;
         card.appendChild(nameSpan);
-
+        
+        card.onclick = async () => {
+              try {
+                updateURL(entry.name);
+                const f = file || await entry.getFile();
+                handleFile(f);
+              } catch (e) {
+                alert('Failed to get file: ' + e.message);
+              }
+        };
+        
         fileGrid.appendChild(card);
+        
+        if (file) {
+           const key = `${file.name}-${file.size}-${file.lastModified}`;
+           getThumb(key).then(thumb => {
+               if(thumb) {
+                   const prog = loadProgress({name: file.name, size: file.size, lastModified: file.lastModified});
+                   if(!prog || !prog.duration) {
+                        enqueueThumbnail(file, img, imgWrapper);
+                   }
+                   img.src = thumb;
+               } else {
+                   enqueueThumbnail(file, img, imgWrapper);
+               }
+           });
+        }
       }
-      if (!found) {
-        fileGrid.innerHTML = `<div class="no-data">No videos or folders found.</div>`;
-      }
+
     } catch (e) {
-      fileGrid.innerHTML = `<div class="no-data">Unable to read folder contents.</div>`;
+      console.error(e);
+      fileGrid.innerHTML = `<div class=\"no-data\">Unable to read folder contents.</div>`;
     }
   }
 
@@ -1271,10 +1834,11 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
     rootSpan.onclick = () => {
       if (currentHandle !== rootHandle) {
         forwardStack = [];
-        pathStack.push(currentHandle);
+        pathStack = [];
         currentHandle = rootHandle;
         updateBreadcrumb();
         updateNavButtons();
+        updateURL();
         listFiles(currentHandle);
       }
     };
@@ -1290,12 +1854,11 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       span.onclick = () => {
         if (currentHandle !== handle) {
           forwardStack = [];
-          const idx = i;
-          while (pathStack.length > idx + 1) pathStack.pop();
-          pathStack.push(currentHandle);
+          pathStack = pathStack.slice(0, i);
           currentHandle = handle;
           updateBreadcrumb();
           updateNavButtons();
+          updateURL();
           listFiles(currentHandle);
         }
       };
@@ -1315,6 +1878,7 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       currentHandle = pathStack.pop();
       updateBreadcrumb();
       updateNavButtons();
+      updateURL();
       listFiles(currentHandle);
     }
   };
@@ -1325,6 +1889,7 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
       currentHandle = forwardStack.pop();
       updateBreadcrumb();
       updateNavButtons();
+      updateURL();
       listFiles(currentHandle);
     }
   };
@@ -1332,13 +1897,73 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
   homeBtn.onclick = () => {
     if (rootHandle && currentHandle !== rootHandle) {
       forwardStack = [];
-      pathStack.push(currentHandle);
+      pathStack = [];
       currentHandle = rootHandle;
       updateBreadcrumb();
       updateNavButtons();
+      updateURL();
       listFiles(currentHandle);
     }
   };
+  
+  async function restorePathFromHash() {
+      const params = new URLSearchParams(window.location.search);
+      const pathStr = params.get('path');
+      if (pathStr) {
+          video.pause();
+          playerContainer.style.display = 'none';
+          document.getElementById('dropzone').style.display = 'none';
+          document.getElementById('browseropen').style.display = 'none';
+      }
+
+      if(!pathStr || !rootHandle) return;
+      
+      const parts = pathStr.split('/').filter(p => p && p !== 'Videos Folder'); 
+      let target = rootHandle;
+      const stack = [];
+      let targetFile = null;
+      
+      try {
+          for(let i = 0; i < parts.length; i++) {
+             const part = parts[i];
+             if (i === 0 && part === rootHandle.name) continue;
+             if (i === parts.length - 1 && isVideoFile(part)) {
+                 targetFile = part;
+                 break; 
+             }
+
+             const nextHandle = await target.getDirectoryHandle(part);
+             stack.push(target);
+             target = nextHandle;
+          }
+          pathStack = stack;
+          currentHandle = target;
+          updateBreadcrumb();
+          updateNavButtons();
+          await listFiles(currentHandle);
+
+          if (targetFile) {
+              try {
+                  const fileHandle = await currentHandle.getFileHandle(targetFile);
+                  const file = await fileHandle.getFile();
+                  handleFile(file);
+              } catch (err) {
+                  console.log("File in path not found: " + targetFile);
+              }
+          }
+      } catch(e) {
+          console.log("Invalid path, resetting to root", e);
+          const url = new URL(window.location);
+          url.searchParams.delete('path');
+          window.history.replaceState({}, '', url);
+          
+          currentHandle = rootHandle;
+          pathStack = [];
+          updateBreadcrumb();
+          updateNavButtons();
+          listFiles(currentHandle);
+      }
+  }
 
   async function init() {
     try {
@@ -1348,13 +1973,18 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
         currentHandle = handle;
         pathStack = [];
         forwardStack = [];
-        updateBreadcrumb();
-        updateNavButtons();
-        await listFiles(currentHandle);
+        
+        await restorePathFromHash(); 
+        
+        if (currentHandle === rootHandle && !window.location.search.includes('path=')) {
+           updateBreadcrumb();
+           updateNavButtons();
+           await listFiles(currentHandle);
+        }
         return;
       }
     } catch {}
-    fileGrid.innerHTML = `<div class="no-data">No folder selected or permission denied.</div>`;
+    fileGrid.innerHTML = `<div class=\"no-data\">No folder selected or permission denied.</div>`;
   }
 
   pickBtn.addEventListener('click', async () => {
@@ -1368,6 +1998,7 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
         forwardStack = [];
         updateBreadcrumb();
         updateNavButtons();
+        updateURL();
         await listFiles(currentHandle);
       } else {
         alert('Permission denied for this folder.');
@@ -1383,4 +2014,3 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
 </script>
 </body>
 </html>
-
