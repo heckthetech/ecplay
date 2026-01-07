@@ -7,7 +7,7 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.2);
+  background: rgb(47 47 47);
   border-radius: 10px;
   backdrop-filter: blur(5px);
  cursor:auto;
@@ -1276,4 +1276,5 @@
     .l-text-part{font-size:1.6rem}
     .l-sub-text{font-size:1rem}
     .l-c-container{width:64px;height:64px}
+
 }
