@@ -32,6 +32,8 @@ function openbrowse(){
   const chartPrevBtn = document.getElementById('chartPrevBtn');
   const chartNextBtn = document.getElementById('chartNextBtn');
   const chartRangeLabel = document.getElementById('chartRangeLabel');
+  const videoTitleEl = document.getElementById('video-title');
+  const bufferSpinner = document.getElementById('buffer-spinner');
   
   let playbackRate = 1;
   let snapTimeout = null;
@@ -42,6 +44,8 @@ function openbrowse(){
   let seekPopupTimeout = null;
   let controlsHideTimer = null;
   let lastSaveTime = -1;
+  let isOnlineVideo = false;
+  let onlineMetaData = null;
   
   let currentViewFiles = [];   let thumbnailQueue = [];   let isProcessingQueue = false;
   let dailyAccumulator = 0;
@@ -265,24 +269,42 @@ function openbrowse(){
   }
 
   function updateTime() {
-    if (!video.duration) return;
     const current = video.currentTime;
-    const duration = video.duration;
-    const left = (duration - current) / playbackRate;
-
+    let duration = video.duration;
+    
     timePassedEl.textContent = formatTime(current);
+    if (!duration || isNaN(duration) || duration === Infinity) {
+        timeLeftTextEl.textContent = '';
+        finishTimeEl.textContent = 'Streaming';
+        seekBar.style.setProperty('--seek-percent', '100%');
+        return;
+    }
+
+    const left = (duration - current) / playbackRate;
     timeLeftTextEl.textContent = '-' + formatTime(left);
 
     const now = new Date();
     const finishDate = new Date(now.getTime() + left * 1000);
     finishTimeEl.textContent = 'Finishes at ' + formatAMPM(finishDate);
 
-      const percent = (current / duration) * 100;
-      seekBar.style.setProperty('--seek-percent', percent + '%');
-
+    const percent = (current / duration) * 100;
+    seekBar.style.setProperty('--seek-percent', percent + '%');
   }
 
   function saveProgress() {
+    if (isOnlineVideo && onlineMetaData) {
+      const metaurl = onlineMetaData.metaurl || onlineMetaData.url || onlineMetaData.urlsplit_video;
+      if (!metaurl) return;
+      const data = {
+        time: video.currentTime,
+        duration: video.duration || 0,
+        playbackRate,
+        timestamp: Date.now() 
+      };
+      localStorage.setItem('online-video-progress-' + metaurl, JSON.stringify(data));
+      return;
+    }
+
     if (!currentFileName) return;
     const data = {
       time: video.currentTime,
@@ -334,7 +356,21 @@ function openbrowse(){
     }
     return null;
   }
+
+  function loadOnlineProgress(metaurl) {
+    const saved = localStorage.getItem('online-video-progress-' + metaurl);
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return null;
+    }
+  }
+
 function handleFile(file) {
+  isOnlineVideo = false;
+  onlineMetaData = null;
+
   if (!file.type.startsWith('video/') && !file.name.match(/\.(mkv|mp4|webm)$/i)) {
   }
   
@@ -344,6 +380,11 @@ function handleFile(file) {
   currentFileName = file.name;
   currentFileSize = file.size;
   currentFileLastModified = file.lastModified;
+
+  if (videoTitleEl) {
+      videoTitleEl.textContent = file.name;
+      videoTitleEl.style.display = 'block';
+  }
 
   const fileURL = URL.createObjectURL(file);
   video.src = fileURL;
@@ -361,10 +402,7 @@ function handleFile(file) {
     lastModified: currentFileLastModified
   });
 
-  
-  video.addEventListener('loadedmetadata', function onMetadata() {
-    video.removeEventListener('loadedmetadata', onMetadata);
-
+  const applyProgress = () => {
     if (progress && progress.time >= 1 && progress.time < video.duration * 0.94) {
       video.currentTime = progress.time;
       playbackRate = progress.playbackRate || 1;
@@ -373,7 +411,16 @@ function handleFile(file) {
       else{showSnapPopup(`Resumed from ${formatTime(progress.time)} @${playbackRate.toFixed(1)}x`);}
     }
     video.play();
-  });
+  };
+
+  if (video.readyState >= 1) {
+      applyProgress();
+  } else {
+      video.addEventListener('loadedmetadata', function onMetadata() {
+        video.removeEventListener('loadedmetadata', onMetadata);
+        applyProgress();
+      });
+  }
 }
 
   video.addEventListener('click', () => {
@@ -395,6 +442,16 @@ function handleFile(file) {
     }
   });
 
+  video.addEventListener('waiting', () => {
+    if (bufferSpinner) bufferSpinner.classList.add('show');
+  });
+  video.addEventListener('playing', () => {
+    if (bufferSpinner) bufferSpinner.classList.remove('show');
+  });
+  video.addEventListener('canplay', () => {
+    if (bufferSpinner) bufferSpinner.classList.remove('show');
+  });
+
   document.addEventListener('keydown', (e) => {
     if (playerContainer.style.display === 'none') return;
     if (e.target === seekBar || e.target === fileInput) return;
@@ -402,7 +459,7 @@ function handleFile(file) {
     const step = 10;
     switch (e.key) {
       case 'ArrowRight':
-        video.currentTime = Math.min(video.currentTime + step, video.duration);
+        video.currentTime = Math.min(video.currentTime + step, video.duration || video.currentTime + step);
         showSeekPopup(`${step}s >`, 'right');
         updateTime();
         break;
@@ -453,9 +510,11 @@ function handleFile(file) {
   seekBar.addEventListener('input', (e) => {
     seeking = true;
     const val = e.target.value;
-    const newTime = (val / 100) * video.duration;
-    video.currentTime = newTime;
-    updateTime();
+    const newTime = (val / 100) * (video.duration || 0);
+    if (!isNaN(newTime)) {
+        video.currentTime = newTime;
+        updateTime();
+    }
   });
   seekBar.addEventListener('change', () => {
     seeking = false;
@@ -493,11 +552,13 @@ function handleFile(file) {
 
   function hideControls() {
     document.getElementById('controls').classList.add('hide');
+    if(videoTitleEl) videoTitleEl.classList.add('hide');
     video.style.cursor = "none";
   }
   function showControls() {
     document.getElementById('controls').classList.remove('hide');
-        video.style.cursor = "";
+    if(videoTitleEl) videoTitleEl.classList.remove('hide');
+    video.style.cursor = "";
 
   }
   function startControlsHideTimer() {
@@ -1248,6 +1309,71 @@ if(!browseornot){localStorage.setItem('browseornot',0);}
   }
 
   async function init() {
+    const data = await window.externalVideoHandler();
+    
+    if (data) {
+        document.getElementById('dropzone').style.display = 'none';
+        document.getElementById('browseropen').style.display = 'none';
+        if (dailyStatsEl) dailyStatsEl.style.display = 'block';
+
+        isOnlineVideo = true;
+        onlineMetaData = data;
+
+        if (videoTitleEl) {
+            videoTitleEl.textContent = data.title || "Online Video";
+            videoTitleEl.style.display = 'block';
+        }
+
+        document.getElementById('player-container').style.display = 'flex';
+        video.focus();
+
+        if (data.thumnail || data.thumbnail) {
+            const thumbUrl = data.thumnail || data.thumbnail;
+            const metaurl = data.metaurl || data.url || data.urlsplit_video;
+            fetch(thumbUrl)
+              .then(res => res.blob())
+              .then(blob => {
+                 const reader = new FileReader();
+                 reader.onloadend = () => saveThumb(`online-${metaurl}`, reader.result);
+                 reader.readAsDataURL(blob);
+              }).catch(e => console.log("Thumbnail fetching error", e));
+        }
+
+        const metaurl = data.metaurl || data.url || data.urlsplit_video;
+        const progress = loadOnlineProgress(metaurl);
+
+        const applyOnlineProgress = () => {
+            let dur = video.duration;
+            if (!dur || isNaN(dur)) {
+                dur = (progress && progress.duration) ? progress.duration : Infinity;
+            }
+            
+            if (progress && progress.time >= 1 && progress.time < dur * 0.94) {
+                video.currentTime = progress.time;
+                playbackRate = progress.playbackRate || 1;
+                video.playbackRate = playbackRate;
+                
+                if (playbackRate === 1) { 
+                    showSnapPopup(`Resumed from ${formatTime(progress.time)}`); 
+                } else { 
+                    showSnapPopup(`Resumed from ${formatTime(progress.time)} @${playbackRate.toFixed(1)}x`); 
+                }
+            }
+            video.play().catch(e => console.log(e));
+        };
+
+        if (video.readyState >= 1) {
+            applyOnlineProgress();
+        } else {
+            video.addEventListener('loadedmetadata', function onMetadata() {
+                video.removeEventListener('loadedmetadata', onMetadata);
+                applyOnlineProgress();
+            });
+        }
+
+        return; 
+    }
+
     try {
       const handle = await getHandle();
       if (handle && await verifyPermission(handle)) {

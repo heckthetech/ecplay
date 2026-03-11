@@ -104,7 +104,7 @@
       display: flex;
       flex-direction: column;
       user-select: none;
-      overflow: hidden;
+      overflow: visible;
       position: relative;
       border: 1px solid rgba(255,255,255,0.05);
       backdrop-filter: blur(12px);
@@ -151,6 +151,95 @@
       object-fit: contain;
       transition: max-height 0.3s ease;
     }
+    
+    #video-title {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 12px;
+      padding: 0 16px;
+      background: transparent;
+      color: #eee;
+      font-size: 1.1rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      display: none;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    
+    #player-container.fullscreen #video-title {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      margin-top: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+      border: none;
+      padding: 20px 16px;
+      text-align: left;
+    }
+    
+    #video-title.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #buffer-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      display: none;
+      z-index: 50;
+      pointer-events: none;
+    }
+    
+    #buffer-spinner.show {
+      display: block;
+    }
+    
+    .b-ring {
+      width: 100%;
+      height: 100%;
+      animation: spinBuffer 2s linear infinite;
+      transform-origin: center center;
+      filter: drop-shadow(0 0 10px rgba(0, 214, 255, 0.5));
+    }
+
+    .b-path {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+      animation: dashBuffer 1.5s ease-in-out infinite;
+      stroke-linecap: round;
+      stroke: url(#spinner-grad);
+    }
+    
+    @keyframes spinBuffer {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes dashBuffer {
+      0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+      }
+      100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+      }
+    }
 
     #controls {
       display: flex;
@@ -170,6 +259,7 @@
       border-top: 1px solid rgba(255,255,255,0.05);
       backdrop-filter: blur(10px);
       box-shadow: inset 0 1px 4px rgba(0,0,0,0.4);
+      border-radius: 0 0 12px 12px;
     }
     #player-container.fullscreen #controls {
     position: absolute;
@@ -216,24 +306,33 @@
     }
 
     #seek-bar {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(
-    to right,
-    #2196f3 0%,
-    #2196f3 var(--seek-percent, 0%),
-    rgba(100, 100, 100, 0.3) var(--seek-percent, 0%),
-    rgba(100, 100, 100, 0.3) 100%
-  );
-  cursor: pointer;
-  outline: none;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-  user-select: none;
-  transition: background 0.3s ease;
-}
+      -webkit-appearance: none;
+      appearance: none;
+      width: 70%;
+      height: 15px;
+      border-radius: 4px;
+      background: linear-gradient(to right, 
+        #00d6ff 0%,
+        #00d6ff var(--seek-percent, 0%), 
+        rgba(255, 255, 255, 0.4) var(--seek-percent, 0%), 
+        rgba(255, 255, 255, 0.4) var(--buffer-percent, 0%), 
+        rgba(255, 255, 255, 0.15) var(--buffer-percent, 0%), 
+        rgba(255, 255, 255, 0.15) 100%
+      ) !important;
+      cursor: pointer;
+      outline: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+      user-select: none;
+      transition: background 0.1s linear;
+    }
+
+    #seek-bar::-webkit-slider-runnable-track { 
+        background: transparent !important; 
+    }
+    
+    #seek-bar::-moz-range-track { 
+        background: transparent !important; 
+    }
 
 #seek-bar::-webkit-slider-thumb {
   -webkit-appearance: none;

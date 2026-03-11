@@ -352,8 +352,7 @@
     .l-text-part{font-size:1.6rem}
     .l-sub-text{font-size:1rem}
     .l-c-container{width:64px;height:64px}
-}
-  </style>
+}</style>
   <link rel="icon" href="favicon.ico" type="image/png" crossorigin="anonymous" sizes="32x32">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap">
 <script>(function() {
@@ -631,7 +630,24 @@
 
   <div id="player-container" aria-label="Video player container">
     <div id="player-box" role="region" aria-label="Video player">
+      
+      <div id="buffer-spinner">
+        <svg class="b-ring" viewBox="25 25 50 50">
+          <defs>
+            <linearGradient id="spinner-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#b9dfff" />
+              <stop offset="50%" stop-color="#a61d18" />
+              <stop offset="100%" stop-color="#00d6ff" />
+            </linearGradient>
+          </defs>
+          <circle class="b-path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+        </svg>
+      </div>
+      
       <video id="video" tabindex="0" playsinline></video>
+      
+      <div id="video-title"></div>
+      
       <div id="snap-popup" role="alert" aria-live="assertive"></div>
       <div id="seek-popup" role="alert" aria-live="assertive"></div>
       <div id="controls" aria-live="polite" aria-atomic="true">
@@ -664,6 +680,7 @@
       </div>
     </div>
   </div>
+<script src="externalvideohandler.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
