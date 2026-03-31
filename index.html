@@ -657,7 +657,22 @@
           <div id="time-left-text">-0:00</div>
           <div id="finish-time" aria-live="polite" aria-atomic="true"></div>
         </span>
-        <button id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (f)">⛶</button>
+        
+        <!-- MODIFIED: Wrapped the right-side buttons together -->
+        <div class="controls-right-btns">
+            <button id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (f)">⛶</button>
+            <div class="player-menu-container">
+              <button id="player-menu-btn" aria-label="Addons Menu" title="Addons">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+              </button>
+              <div id="player-dropdown" class="player-dropdown-content">
+                  <!-- API Addon options get appended here -->
+              </div>
+            </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -682,5 +697,6 @@
   </div>
 <script src="externalvideohandler.js"></script>
 <script src="app.js"></script>
+<script src="addon.js"></script>
 </body>
 </html>
