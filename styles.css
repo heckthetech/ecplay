@@ -266,7 +266,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(20,20,20,0.6);
+    background: rgba(20, 20, 20, 0.872);
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0,0,0,0.6);
     border-bottom-left-radius: 0;
@@ -364,7 +364,7 @@
     transition: background 0.3s ease;
     flex-shrink: 0;
     filter: drop-shadow(0 0 1px rgba(0,0,0,0.9));
-    transform: translate3d(15px, -10px, 0px);    }
+    }
     #fullscreen-btn:hover {
       background: rgba(255,255,255,0.15);
       color: #eee;
@@ -1377,3 +1377,206 @@
     .l-c-container{width:64px;height:64px}
 
 }
+
+/* ==================================================== */
+/* ADDED: Addon API UI Elements for Player Controls     */
+/* ==================================================== */
+.controls-right-btns {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  transform: translate3d(17px, -10px, 0px); 
+}
+
+#fullscreen-btn {
+  transform: none !important; 
+}
+
+.player-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#player-menu-btn {
+  background: transparent;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: background 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.9));
+}
+
+#player-menu-btn:hover {
+  background: rgba(255,255,255,0.15);
+  color: #eee;
+}
+
+.player-dropdown-content {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 15px); 
+  right: 0;
+  background-color: rgba(25, 25, 25, 0.95);
+  min-width: 170px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+  border-radius: 8px;
+  border: 1px solid #444;
+  z-index: 400;
+  overflow: hidden;
+  animation: fadeIn 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+.player-dropdown-content.show {
+  display: block;
+}
+
+.player-dropdown-item {
+  color: #ddd;
+  padding: 10px 14px;
+  text-decoration: none;
+  display: block;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.player-dropdown-item:hover {
+  background-color: #3a3a3a;
+  color: #fff;
+}
+
+
+ .addon-submenu {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            min-width: 220px;
+        }
+        .addon-submenu.active {
+            display: flex;
+        }
+        
+        .addon-submenu-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .addon-submenu-header:hover {
+            background-color: #3a3a3a;
+        }
+        .addon-submenu-header svg {
+            margin-right: 12px;
+            fill: currentColor;
+            width: 16px;
+            height: 16px;
+        }
+
+        .addon-submenu-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            color: #ddd;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .addon-submenu-row:hover {
+            background-color: #3a3a3a;
+        }
+
+        .m3-switch {
+            appearance: none;
+            width: 52px;
+            height: 32px;
+            background: #333333;
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            border: 2px solid #8e918f;
+            transition: background 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                        border-color 0.2s cubic-bezier(0.2, 0, 0, 1);
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .m3-switch::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #8e918f;
+            top: 6px;
+            left: 6px;
+            transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                        width 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                        height 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                        top 0.2s cubic-bezier(0.2, 0, 0, 1),
+                        background 0.2s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .m3-switch:checked {
+            background: #a8c7fa;
+            border-color: #a8c7fa;
+        }
+        .m3-switch:checked::before {
+            background: #062e6f;
+            width: 24px;
+            height: 24px;
+            top: 2px;
+            transform: translateX(17px);
+        }
+
+        .addon-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 4px;
+            background: #444;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        .addon-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #a8c7fa;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .addon-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        .addon-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #a8c7fa;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .addon-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+    
