@@ -162,10 +162,13 @@ window.externalVideoHandler = async function() {
             smartData.thumbnail = extract('thumnail') || extract('thumbnail');
         }
     } else {
-        let directUrl = decodedParam;
-        if (!directUrl.startsWith('http')) {
-            directUrl = 'http://' + directUrl;
-        }
+       let directUrl = decodedParam;
+
+if (!/^https?:\/\//i.test(directUrl)) {
+    directUrl = 'http://' + directUrl;
+} else if (/^http:\/\//i.test(directUrl)) {
+    directUrl = directUrl;
+}
         smartData = { url: directUrl, title: "Online Video" };
     }
 
