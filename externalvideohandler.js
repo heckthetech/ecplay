@@ -163,7 +163,7 @@ window.externalVideoHandler = async function() {
         }
     } else {
         let directUrl = decodedParam;
-        if (!directUrl.startsWith('http')) {
+        if (!directUrl.startsWith('https')) {
             directUrl = 'https://' + directUrl;
         }
         smartData = { url: directUrl, title: "Online Video" };
